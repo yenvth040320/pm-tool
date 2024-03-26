@@ -1,0 +1,91 @@
+stages:
+  - build
+  - sync
+.setting-ssh-dev: &setting-ssh-dev |
+  eval $(ssh-agent -s) && echo "$DEV_SSH_KEY" | ssh-add -
+  mkdir -p ~/.ssh
+  echo -e "Host *\n\tStrictHostKeyChecking no\n\tControlMaster auto\n\tControlPath /tmp/ansible-%r@%h:%p\n\tControlPersist 15m\n\tPreferredAuthentications publickey
+  \n\n" > ~/.ssh/config
+  chmod go-wrx ~/.ssh
+  chmod go-w ~/.ssh/config
+.setting-ssh-prd-batch: &setting-ssh-prd-batch |
+  eval $(ssh-agent -s) && echo "$PRD_SSH_KEY" | ssh-add -
+  mkdir -p ~/.ssh
+  echo -e "Host *\n\tStrictHostKeyChecking no\n\tControlMaster auto\n\tControlPath /tmp/ansible-%r@%h:%p\n\tControlPersist 15m\n\tPreferredAuthentications publickey
+  \n\n" > ~/.ssh/config
+  chmod go-wrx ~/.ssh
+  chmod go-w ~/.ssh/config
+########################DEV#################################
+build_dev:
+  stage: build
+  script:
+    - echo "${DEV_ENV}" > .env
+    - yarn cache clean
+    - yarn install
+    - yarn generate
+
+  artifacts:
+    paths:
+      - dist/
+  tags:
+    - docker
+  only:
+    - develop
+  when: on_success
+
+sync2batch_dd_dev:
+  stage: sync
+  cache: {}
+  script:
+    - *setting-ssh-dev
+    - echo "${DEV_ENV}" > .env
+    - ssh -ttttttttttt $DEV_DEPLOY_USER@$DEV_BATCH_HOST "sudo chown -R $DEV_DEPLOY_USER:$DEV_DEPLOY_USER $DEV_DEPLOY_DIR/"
+    - rsync -c -alv --ignore-times --delete --exclude='.git' --exclude=storage/logs/ ./ $DEV_DEPLOY_USER@$DEV_BATCH_HOST:$DEV_DEPLOY_DIR/
+    - ssh -ttttttttttt $DEV_DEPLOY_USER@$DEV_BATCH_HOST "sudo chown -R nginx:nginx $DEV_DEPLOY_DIR/"
+    - ssh -ttttttttttt $DEV_DEPLOY_USER@$DEV_BATCH_HOST  "sudo find $DEV_DEPLOY_DIR/ -type d -exec chmod 755 -R {} \;"
+    - ssh -ttttttttttt $DEV_DEPLOY_USER@$DEV_BATCH_HOST  "sudo find $DEV_DEPLOY_DIR/ -type f -exec chmod 644 {} \;"
+
+  dependencies:
+    - build_dev
+  tags:
+    - docker
+  only:
+    - develop
+  when: on_success
+######################## END DEV#################################
+########################PROD#################################
+build_prod:
+  stage: build
+  script:
+    - echo "${PRD_ENV}" > .env
+    - yarn install
+    - yarn generate
+
+  artifacts:
+    paths:
+      - dist/
+  tags:
+    - docker
+  only:
+    - prod
+  when: on_success
+
+sync2batch_prod:
+  stage: sync
+  cache: {}
+  script:
+    - *setting-ssh-prd-batch
+    - ssh -ttttttttttt $PRD_DEPLOY_USER@$PRD_BATCH_HOST "sudo chown -R $PRD_DEPLOY_USER:$PRD_DEPLOY_USER $PRD_DEPLOY_DIR/"
+    - rsync -c -alv --ignore-times --delete --exclude='.git' ./ $PRD_DEPLOY_USER@$PRD_BATCH_HOST:$PRD_DEPLOY_DIR/
+    - ssh -ttttttttttt $PRD_DEPLOY_USER@$PRD_BATCH_HOST "sudo chown -R nginx:nginx $PRD_DEPLOY_DIR/"
+    - ssh -ttttttttttt $PRD_DEPLOY_USER@$PRD_BATCH_HOST  "sudo find $PRD_DEPLOY_DIR/ -type d -exec chmod 755 -R {} \;"
+    - ssh -ttttttttttt $PRD_DEPLOY_USER@$PRD_BATCH_HOST  "sudo find $PRD_DEPLOY_DIR/ -type f -exec chmod 644 {} \;"
+
+  dependencies:
+    - build_prod
+  tags:
+    - docker
+  only:
+    - prod
+  when: on_success
+######################## END PROD#################################

@@ -1,0 +1,216 @@
+/*
+ * Copyright 2020 Digi Dinos JSC. All rights reserved.
+ * Email: tech@digidinos.com.
+ */
+
+/**
+ * SCSS common styles
+ */
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+.min-w-100 {
+  min-width: 100px !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.ant-table {
+  table {
+    border-top: 1px solid #e8e8e8;
+  }
+}
+
+.ant-form-item-label {
+  white-space: normal;
+  line-height: 1.5;
+  padding-top: 9px;
+  padding-right: 5px;
+  @include mq(max_xs) {
+    padding: 0 0 3px 0;
+  }
+  > label {
+    &:after {
+      margin-right: 0;
+    }
+  }
+}
+
+.ant-select {
+  width: 100%;
+}
+
+.svg-inline--fa {
+  height: 1em;
+}
+
+.ant-modal-root:not(.ant-modal-confirm) {
+  .ant-modal {
+    @include mq(max_xl) {
+      max-width: 1170px;
+    }
+    @include mq(max_lg) {
+      max-width: 95%;
+    }
+
+    .ant-modal-body {
+      padding: 0;
+    }
+  }
+}
+.ant-form-item:not(.default) {
+  position: relative;
+  .ant-form-explain {
+    position: absolute;
+  }
+  .ant-form-item-children {
+    position: relative;
+  }
+}
+
+// css modal
+.modal-notifi {
+  .ant-modal-wrap {
+    .ant-modal {
+      box-shadow: 3px 3px 20px #353333;
+      padding-bottom: 0px;
+      max-width: 340px !important;
+      .ant-modal-header {
+        border-bottom: none;
+      }
+      .ant-modal-body {
+        p {
+          padding: 30px 30px 0px 30px;
+          margin-bottom: 0px;
+        }
+      }
+      .ant-modal-footer {
+        border-top: none;
+        padding: 0px;  
+        div {
+          padding: 25px 25px;
+          .ant-btn {
+            width: 40%;
+            margin-right: 15px;
+            border-radius: 0px;
+            border: 1px solid #1a98fc;
+            color: #000000;
+            box-shadow: none;
+            &:hover {
+              background-color: #1a98fc;
+              color: #ffffff;
+            }
+          }
+          .ant-btn-primary {
+            margin-left: 15px;
+            float: left;
+            background-color: #ffffff;
+            border: 1px solid #1a98fc;
+          }
+        }
+      }
+      .text {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 700;
+        text-align: center;
+        color: #000000;
+        span {
+          font-weight: 400;
+          color: red;
+        }
+      }
+    }
+    .ant-modal-close-x {
+      i {
+        display: none;
+      }
+    }
+  }
+}
+.modal-notifi {
+  .ant-modal-footer { 
+    div {
+      display: flex;
+      justify-content: center;
+      .ant-btn {
+        margin-right: 0px;
+      }
+      .ant-btn-primary {
+        display: none;
+      }
+    }
+  }
+}
+
+.button-create {
+  border-color: #1A98FC !important;
+  background-color: #ffffff !important;
+  color: #1A98FC !important;
+  &:hover {
+    border-color: #1A98FC !important;
+    background-color: #1A98FC !important;
+    color: #FFFFFF !important;
+  }
+}
+.no-border {
+  .ant-card-head {
+    border-bottom: none;
+  }
+  border: none !important;
+}
+.ant-form-item:not(.default) {
+  margin-bottom: 24px;
+  position: relative;
+  .ant-form-explain {
+    position: absolute;
+  }
+  .ant-form-item-children {
+    position: relative;
+  }
+}
+
+/* -----------------------------------------------------------
+  Spacing
+----------------------------------------------------------- */
+@each $prop, $abbrev in (margin: m, padding: p) {
+  @each $size, $length in $spacers {
+    .#{$abbrev}-#{$size} {
+      #{$prop}: $length !important;
+    }
+    .#{$abbrev}t-#{$size},
+    .#{$abbrev}y-#{$size} {
+      #{$prop}-top: $length !important;
+    }
+    .#{$abbrev}r-#{$size},
+    .#{$abbrev}x-#{$size} {
+      #{$prop}-right: $length !important;
+    }
+    .#{$abbrev}b-#{$size},
+    .#{$abbrev}y-#{$size} {
+      #{$prop}-bottom: $length !important;
+    }
+    .#{$abbrev}l-#{$size},
+    .#{$abbrev}x-#{$size} {
+      #{$prop}-left: $length !important;
+    }
+  }
+}
